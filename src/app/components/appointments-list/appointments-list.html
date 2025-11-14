@@ -1,0 +1,139 @@
+<section class="flex-1 p-4 mb-2 bg-white rounded-2xl shadow-lg">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <!-- Filtros -->
+        <div class="flex flex-col sm:flex-row flex-wrap gap-3 items-center w-full sm:w-auto">
+            <!-- Filtro por nombre -->
+            <div class="relative w-full sm:w-auto flex-1 min-w-[180px]">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">🔍</span>
+                <input type="text" [(ngModel)]="searchName" placeholder="Buscar paciente"
+                    class="w-full pl-10 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400" />
+            </div>
+
+            <!-- Datepicker -->
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <input type="date" [(ngModel)]="selectedDate"
+                    class="w-full sm:w-auto pl-6 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400" />
+            </div>
+
+            <!-- Select horario -->
+            <select [(ngModel)]="selectedRange"
+                class="w-full sm:w-auto pl-6 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400">
+                <option value="all">Todo el día</option>
+                <option value="morning">8:00 - 12:00</option>
+                <option value="afternoon">12:00 - 18:00</option>
+            </select>
+        </div>
+
+        <!-- Resumen -->
+        <div class="text-right w-full sm:w-auto">
+            <p>
+                <span class="text-teal-600 font-semibold">
+                    📅 {{ formatSpanishDate(selectedDate) }}
+                </span>
+            </p>
+            <p class="text-sm text-gray-600 font-medium">
+                Total: {{ filteredAppointments.length }} — Atendidos: {{ attendedCount }}
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="flex-1 p-4 mt-2 mb-6 bg-white rounded-2xl shadow-lg">
+    <!-- 🧾 Tabla escritorio -->
+    <div class="hidden md:block overflow-x-auto">
+        <table class="w-full border-collapse table-fixed">
+            <thead>
+                <tr class="bg-teal-600 text-white">
+                    <th class="p-2 w-[100px] text-left">Hora</th>
+                    <th class="p-2 w-[250px] text-left">Paciente</th>
+                    <th class="p-2 w-[180px] text-left">Teléfono</th>
+                    <th class="p-2 w-[100px] text-center">Atendido</th>
+                    <th class="p-2 w-[100px] text-center">-</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let appointment of filteredAppointments" [ngClass]="{
+            'bg-gray-100 line-through text-gray-400': appointment.attended
+          }" class="border-b border-gray-200 transition-colors duration-200 hover:bg-gray-50">
+                    <td class="p-2 font-medium">{{ appointment.time }}</td>
+                    <td class="p-2">
+                        <ng-container *ngIf="appointment.patient; else libre">
+                            <div class="flex items-center justify-between gap-2">
+                                <span>{{ appointment.patient.name }} {{ appointment.patient.lastName }}</span>
+
+                            </div>
+                        </ng-container>
+
+                        <ng-template #libre>
+                            <select class="border rounded-lg px-3 py-1 w-[220px] focus:ring-2 focus:ring-teal-500"
+                                [(ngModel)]="appointment.patient">
+                                <option [ngValue]="null">Turno libre</option>
+                                <option *ngFor="let p of patients" [ngValue]="p">
+                                    {{ p.name }} {{ p.lastName }}
+                                </option>
+                            </select>
+                        </ng-template>
+                    </td>
+
+                    <td class="p-2">{{ appointment.patient?.phone || '-' }}</td>
+                    <td class="p-2 text-center">
+                        <input type="checkbox" [(ngModel)]="appointment.attended" class="w-5 h-5 accent-teal-600" />
+                    </td>
+
+                    <td class="p-2 text-center"> <button *ngIf="appointment.patient"
+                            (click)="removeAppointmentPatient(appointment)"
+                            class=" text-gray-400 hover:text-red-500 transition-colors duration-200" title="Desagendar">
+                            🗑️
+                        </button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 📱 Vista móvil -->
+    <div class="md:hidden space-y-3">
+        <div *ngFor="let appointment of filteredAppointments" [ngClass]="{
+        'bg-gray-100 line-through text-gray-400': appointment.attended
+      }" class="border border-gray-200 rounded-xl p-3 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-semibold text-teal-700">{{ appointment.time }}</span>
+                <input type="checkbox" [(ngModel)]="appointment.attended" class="w-5 h-5 accent-teal-600" />
+            </div>
+
+            <div>
+                <p class="text-sm flex gap-2">
+                    👤
+                    <ng-container *ngIf="appointment.patient; else libreMobile">
+                        <span>{{ appointment.patient.name }} {{ appointment.patient.lastName }}</span>
+
+                    </ng-container>
+                </p>
+
+
+                <ng-template #libreMobile>
+                    <select
+                        class="mt-1 border border-gray-300 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-teal-500"
+                        [(ngModel)]="appointment.patient">
+                        <option [ngValue]="null">Turno libre</option>
+                        <option *ngFor="let p of patients" [ngValue]="p">
+                            {{ p.name }} {{ p.lastName }}
+                        </option>
+                    </select>
+                </ng-template>
+
+                <p class="text-sm flex justify-between items-center">
+
+                    <ng-container *ngIf="appointment.patient">
+                        <p class="text-sm mt-1">📞 {{ appointment?.patient?.phone || '-' }}</p>
+                        <button (click)="removeAppointmentPatient(appointment)"
+                            class="text-gray-400 hover:text-red-500 transition-colors duration-200 ml-2"
+                            title="Desagendar">
+                            🗑️
+                        </button>
+                    </ng-container>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</section>

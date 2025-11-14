@@ -1,0 +1,184 @@
+<section class="history p-4 md:p-8">
+  <div class="header-actions mb-4 flex justify-end">
+    <button class="btn-download"
+            (click)="downloadPdf()">
+      Descargar Historia Clínica (PDF)
+    </button>
+  </div>
+
+  <form class="history__form space-y-6">
+
+    <!-- CONTENEDOR DOS COLUMNAS EN DESKTOP -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- DATOS DEL PACIENTE -->
+      <div class="history__section p-4 border rounded-lg bg-white">
+        <h3 class="history__title">Datos del paciente</h3>
+
+        <div class="grid grid-cols-1 gap-4">
+          <label class="history__label">
+            Apellido y nombre
+            <input type="text" [(ngModel)]="model.nombre" name="nombre"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            Domicilio
+            <input type="text" [(ngModel)]="model.domicilio" name="domicilio"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            Celular
+            <input type="text" [(ngModel)]="model.celular" name="celular"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            E-mail
+            <input type="email" [(ngModel)]="model.email" name="email"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            N° de documento
+            <input type="text" [(ngModel)]="model.dni" name="dni"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            Fecha de nacimiento
+            <input type="date" [(ngModel)]="model.fn" name="fn"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            Edad
+            <input type="number" [(ngModel)]="model.edad" name="edad"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+        </div>
+      </div>
+
+      <!-- COBERTURA -->
+      <div class="history__section p-4 border rounded-lg bg-white">
+        <h3 class="history__title">Cobertura</h3>
+
+        <div class="grid grid-cols-1 gap-4">
+          <label class="history__label">
+            Cobertura
+            <input type="text" [(ngModel)]="model.cobertura" name="cobertura"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            N° de afiliado
+            <input type="text" [(ngModel)]="model.afiliado" name="afiliado"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            Plan
+            <input type="text" [(ngModel)]="model.plan" name="plan"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            Recomendado por
+            <input type="text" [(ngModel)]="model.recomendado" name="recomendado"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            Médico de cabecera
+            <input type="text" [(ngModel)]="model.medico" name="medico"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+
+          <label class="history__label">
+            Ocupación
+            <input type="text" [(ngModel)]="model.ocupacion" name="ocupacion"
+                   class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ODONTOGRAMA (visual en UI) -->
+    <div class="history__odontogram p-4 border rounded-lg bg-gray-50" id="odontogramaCanvas">
+      <p class="text-sm mb-2 font-semibold text-center">Odontograma</p>
+
+      <div class="odontograma-grid">
+        <!-- Fila superior (16 cuadritos) -->
+        <div class="odontograma-row">
+          <div *ngFor="let t of upperTeeth" class="tooth-box"></div>
+        </div>
+
+        <!-- Separador (visual) -->
+        <div class="my-2"></div>
+
+        <!-- Fila inferior (16 cuadritos) -->
+        <div class="odontograma-row">
+          <div *ngFor="let t of lowerTeeth" class="tooth-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOTIVO / ANTECEDENTES (dos columnas en PDF también) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 history__section">
+      <div class="p-4">
+        <h4 class="font-semibold mb-2">Motivo de su consulta</h4>
+
+        <label class="history__label">
+          Motivo (detalle)
+          <textarea [(ngModel)]="model.motivo" name="motivo"
+                    class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400 h-28"></textarea>
+        </label>
+
+        <div class="mt-3">
+          <p>Diabetes: <input type="checkbox" [(ngModel)]="model.diabetes" name="diabetes"/></p>
+          <p>Enfermedades cardíacas: <input type="checkbox" [(ngModel)]="model.cardio" name="cardio"/></p>
+          <p>Enfermedades hepáticas: <input type="checkbox" [(ngModel)]="model.hepa" name="hepa"/></p>
+          <p>Enfermedades renales: <input type="checkbox" [(ngModel)]="model.renal" name="renal"/></p>
+        </div>
+      </div>
+
+      <div class="p-4">
+        <h4 class="font-semibold mb-2">Información adicional</h4>
+
+        <label class="history__label">
+          Fuma — cigarrillos por día
+          <input type="number" [(ngModel)]="model.cigarrillos" name="cigarrillos"
+                 class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+        </label>
+
+        <label class="history__label mt-2">
+          ¿Está embarazada?
+          <input type="checkbox" [(ngModel)]="model.embarazada" name="embarazada"/>
+        </label>
+
+        <label class="history__label mt-2">
+          Su médico autoriza el tratamiento
+          <input type="text" [(ngModel)]="model.medicoAutoriza" name="medicoAutoriza"
+                 class="w-full pl-3 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+        </label>
+      </div>
+    </div>
+
+    <!-- TEXTO DE CONSENTIMIENTO (copiado tal cual - incompleto) -->
+    <div class="history__authorization p-4 border rounded-lg text-sm bg-white">
+      <p>
+        Por la presente autorizo a la Dra. Fanny Pardo a realizar los tratamientos que se detallan a continuación, utilizando técnicas de restauración o de cirugía bucal que sean necesarios. Comprendo que un resultado perfecto no puede garantizarse. Se me han explicado los riesgos y complicaciones inherentes al tratamiento. Comprendo que la concurrencia regular a las citas, los controles periódicos, el buen uso de la aparatología si la hubiese y la correcta higiene ayudan al éxito del tratamiento. Así mismo me comprometo a pagar a los honorarios cuando fueran acordados. Reconozco y acepto que el consultorio está siendo monitoreado por cámaras de seguridad con el fin de proteger la seguridad de las personas y los bienes presentes en el lugar.
+      </p>
+    </div>
+
+    <!-- FIRMA -->
+    <div class="flex justify-center mt-6">
+      <div class="signature-line text-center">
+        FIRMA: <span class="dots inline-block ml-2"></span>
+      </div>
+    </div>
+
+  </form>
+</section>

@@ -1,0 +1,100 @@
+<section class="flex-1 p-4   mb-2 bg-white rounded-2xl shadow-lg">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <!-- Input con lupa -->
+        <div class="relative w-full sm:w-auto flex-1 min-w-[180px] max-w-[550px]" >
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                🔍
+            </span>
+            <input type="text" [(ngModel)]="searchName" placeholder="Buscar por paciente"
+                class="w-full pl-10 pr-2 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+        </div>
+
+        <!-- Botón Añadir Paciente -->
+        <button class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-colors duration-200"
+            (click)="addPacient()">
+            Añadir Paciente
+        </button>
+    </div>
+</section>
+
+<section class="flex-1 p-4 mt-2 mb-6 bg-white rounded-2xl shadow-lg">
+ <div class="hidden md:block overflow-x-auto">
+     <table class="w-full border-collapse table-fixed mb:block ">
+        <thead class="bg-teal-600 text-white">
+            <tr>
+                <th class="w-1/3 px-4 py-2 text-left">Paciente</th>
+                <th class="w-1/6 px-4 py-2 text-left">Número</th>
+                <th class="w-1/6 px-4 py-2 text-left">Documento</th>
+                <th class="w-1/3 px-4 py-2 text-right">Historia Clínica</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let p of paginatedPacients; let i = index"
+                class="border-b border-gray-200 transition-colors duration-200 hover:bg-gray-50">
+                <td class="px-4 py-2">{{ p?.name }} {{ p?.lastName }}</td>
+                <td class="px-4 py-2">{{ p?.phone }}</td>
+                <td class="px-4 py-2">{{ p?.document }}</td>
+                <td class="px-4 py-2 text-right">
+                    <button
+                        class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-teal-800 transition-colors duration-200"
+                        (click)="viewHistory(p)">
+                        Ver
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+ </div>
+    <!-- DESKTOP: Tabla normal -->
+   
+    <!-- MOBILE: Lista apilada -->
+    <div class="flex flex-col space-y-4 md:hidden">
+        <div *ngFor="let p of paginatedPacients.slice(0,5)"
+            class="border border-gray-200 rounded-xl p-3 shadow-sm">
+            <div class="font-medium text-gray-800">{{ p.name }} {{ p.lastName }}</div>
+            <div class="text-gray-500 mt-1">Documento: {{ p.document }}</div>
+            <div class="text-gray-500 mt-1">Número: {{ p?.phone }}</div>
+
+            <!-- Botón centrado -->
+           <div class="mt-2 flex justify-center">
+  <button class="bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-800 transition-colors duration-200"
+          (click)="viewHistory(p)">
+    Ver Historia Clínica
+  </button>
+</div>
+        </div>
+    </div>
+
+
+    <!-- Paginación -->
+    <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-2 md:hidden">
+        <div class="flex gap-2">
+            <button class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 transition-colors duration-200"
+                (click)="changePage(-1)" [disabled]="currentPage === 1">
+                Anterior
+            </button>
+            <button class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 transition-colors duration-200"
+                (click)="changePage(1)" [disabled]="currentPage === totalPages">
+                Siguiente
+            </button>
+        </div>
+        <span class="mt-2 sm:mt-0 text-gray-700">Página {{ currentPage }} de {{ totalPages }}</span>
+    </div>
+
+<div class="mt-4 hidden md:flex flex-col sm:flex-row justify-between items-center gap-2">
+    <button class="bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600 transition-colors duration-200"
+        (click)="changePage(-1)" [disabled]="currentPage === 1">
+        Anterior
+    </button>
+
+    <span class="mt-2 sm:mt-0 text-gray-700">Página {{ currentPage }} de {{ totalPages }}</span>
+
+    <button class="bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600 transition-colors duration-200"
+        (click)="changePage(1)" [disabled]="currentPage === totalPages">
+        Siguiente
+    </button>
+</div>
+
+
+</section>
